@@ -121,6 +121,7 @@ class LoginUser(flask_login.UserMixin, database.Model):
 
 	id: Mapped[str] = mapped_column(primary_key=True, nullable=False)
 	password: Mapped[str] = mapped_column(nullable=False)
+	role: Mapped[str] = mapped_column(nullable=False)
 
 
 @login_manager.user_loader
@@ -135,6 +136,19 @@ def request_loader(request):
 @login_manager.unauthorized_handler
 def unauthorized_handler():
 	return abort(401)
+
+
+def register_user(username: str, password: str, role: str):
+	if database.session.get(LoginUser, username):
+		raise FileExistsError(f'\'{username}\' already exists')
+
+	new_user = LoginUser(
+		id = username,
+		password = password,
+		role = 'user'
+	)
+	database.session.add(new_user)
+	database.session.commit()
 
 
 # --------------------------------------- #
@@ -214,15 +228,10 @@ def create_server():
 		except KeyError:
 			abort(400)
 
-		if database.session.get(LoginUser, username):
+		try:
+			register_user(username, password, 'user')
+		except FileExistsError:
 			abort(409)
-
-		new_user = LoginUser(
-			id = username,
-			password = password
-		)
-		database.session.add(new_user)
-		database.session.commit()
 
 		return Response(status=200)
 
