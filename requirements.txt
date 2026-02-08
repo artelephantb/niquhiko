@@ -1,6 +1,10 @@
 flask
 flask-sqlalchemy
 
+flask-login
+flask-bcrypt
+flask-migrate
+
 markdown
 
 bleach
