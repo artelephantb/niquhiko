@@ -4,6 +4,7 @@
 {% set selectedTab = 'create_post' %}
 
 {% block body %}
+	<p id='error' style='color: red;' hidden></p>
 	<input id='postTitle' type='text' placeholder='Title' style='width: 100%;'/>
 	<textarea id='postDescription' placeholder='Description' style='height: 100px;'></textarea>
 	<textarea id='postContent' placeholder='Content' style='height: 400px;'></textarea>
@@ -18,8 +19,18 @@
 				content: document.getElementById("postContent").value
 			})
 		})
-		.then(() => {
-			window.location.href = "/"
+		.then(response => {
+			if (response.status == 200) window.location.href = "/"
+			else if (response.status == 409) {
+				let errorReference = document.getElementById("error");
+				errorReference.hidden = false;
+				errorReference.innerText = "Title taken by another post.";
+			}
+			else {
+				let errorReference = document.getElementById("error");
+				errorReference.hidden = false;
+				errorReference.innerText = "An unknown error has occured.";
+			}
 		})
 	'>Post</button>
 {% endblock %}

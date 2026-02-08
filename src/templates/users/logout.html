@@ -4,9 +4,15 @@
 {% set selectedTab = 'logout' %}
 
 {% block body %}
+	<p id='error' style='color: red;' hidden></p>
 	<button onclick='fetch("/api/v0/users/logout", {method: "POST"})
-		.then(() => {
-			window.location.href = "/"
+		.then(response => {
+			if (response.status == 200) window.location.href = "/"
+			else {
+				let errorReference = document.getElementById("error");
+				errorReference.hidden = false;
+				errorReference.innerText = "An unknown error has occured.";
+			}
 		})
 	'>Logout?</button>
 {% endblock %}
