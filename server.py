@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, send_file, render_template, render_template_string, jsonify, abort
+from flask import Flask, request, Response, render_template, jsonify, abort
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
@@ -63,6 +63,28 @@ def create_post(title: str, author: str, description: str, content: str):
 	database.session.add(post)
 	database.session.commit()
 
+def get_post(id: str):
+	post_info = database.get_or_404(DatabasePost, id)
+
+	with open(f'instance/posts/{post_info.content_link}', 'r') as file:
+		post_content = file.read()
+
+	post_content = markdown(post_content)
+	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags)
+
+	return post_info, post_content
+
+def render_post(id: str):
+	post_info, post_content = get_post(id)
+
+	return render_template(
+		'post.html',
+
+		siteName = site_name,
+		pageName = post_info.title,
+		content = post_content
+	)
+
 
 # --------------------------------------- #
 # Sanatizers
@@ -87,7 +109,7 @@ def get_cleaned_string(name: str, allowed_characters=allowed_clean_characters, s
 # API Routes
 # --------------------------------------- #
 @server.route('/api/v0/posts/create', methods=['POST'])
-def route_create_post():
+def route_api_create_post():
 	request_json = request.get_json()
 
 	try:
@@ -105,6 +127,17 @@ def route_create_post():
 
 	return Response(status=200)
 
+@server.route('/api/v0/posts/<id>')
+def route_api_get_post(id):
+	post_info, post_content = get_post(id)
+
+	return jsonify({
+		'title': post_info.title,
+		'author': post_info.author,
+		'description': post_info.description,
+		'content': post_content
+	})
+
 
 # --------------------------------------- #
 # Normal Routes
@@ -112,3 +145,7 @@ def route_create_post():
 @server.route('/')
 def route_homepage():
 	return render_template('main.html', siteName=site_name, pageName='Homepage')
+
+@server.route('/posts/<id>')
+def route_get_post(id):
+	return render_post(id)
