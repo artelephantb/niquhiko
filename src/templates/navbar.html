@@ -1,12 +1,16 @@
 <a {% if selectedTab == 'home' %}
 		class='current'
 	{% endif %} href='/'>Home</a>
-<a {% if selectedTab == 'register' %}
-		class='current'
-	{% endif %} href='/users/register'>Register</a>
-<a {% if selectedTab == 'login' %}
-		class='current'
-	{% endif %} href='/users/login'>Login</a>
-<a {% if selectedTab == 'logout' %}
-		class='current'
-	{% endif %} href='/users/logout'>Logout</a>
+
+{% if user %}
+	<a {% if selectedTab == 'logout' %}
+			class='current'
+		{% endif %} href='/users/logout'>Logout</a>
+{% else %}
+	<a {% if selectedTab == 'register' %}
+			class='current'
+		{% endif %} href='/users/register'>Register</a>
+	<a {% if selectedTab == 'login' %}
+			class='current'
+		{% endif %} href='/users/login'>Login</a>
+{% endif %}

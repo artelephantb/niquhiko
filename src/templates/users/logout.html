@@ -4,5 +4,9 @@
 {% set selectedTab = 'logout' %}
 
 {% block body %}
-<a href='/api/v0/users/logout'><button>Logout?</button></a>
+	<button onclick='fetch("/api/v0/users/logout", {method: "POST"})
+		.then(() => {
+			window.location.href = "/"
+		})
+	'>Logout?</button>
 {% endblock %}

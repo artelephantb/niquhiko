@@ -225,7 +225,13 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/')
 	def route_homepage():
-		return render_template('homepage.html', siteName=site_name)
+		try:
+			flask_login.current_user.id
+			user_logged_in = True
+		except AttributeError:
+			user_logged_in = False
+
+		return render_template('homepage.html', siteName=site_name, user=user_logged_in)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -266,7 +272,7 @@ def create_server():
 		flask_login.login_user(user_info)
 		return Response(status=200)
 
-	@server.route('/api/v0/users/logout')
+	@server.route('/api/v0/users/logout', methods=['POST'])
 	def route_api_user_logout():
 		flask_login.logout_user()
 		return Response(status=200)
@@ -286,7 +292,7 @@ def create_server():
 
 	@server.route('/users/logout')
 	def route_user_logout():
-		return render_template('users/logout.html', siteName=site_name)
+		return render_template('users/logout.html', siteName=site_name, user=True)
 
 
 	return server
