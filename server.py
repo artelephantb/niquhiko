@@ -66,11 +66,11 @@ def get_cleaned_string(name: str, allowed_characters=allowed_clean_characters, s
 class DatabasePost(database.Model):
 	__tablename__ = 'posts'
 
-	id: Mapped[str] = mapped_column(primary_key=True)
-	title: Mapped[str] = mapped_column()
-	author: Mapped[str] = mapped_column()
-	description: Mapped[str] = mapped_column()
-	content_link: Mapped[str] = mapped_column()
+	id: Mapped[str] = mapped_column(primary_key=True, nullable=False)
+	title: Mapped[str] = mapped_column(nullable=False)
+	author: Mapped[str] = mapped_column(nullable=False)
+	description: Mapped[str] = mapped_column(nullable=False)
+	content_link: Mapped[str] = mapped_column(nullable=False)
 
 
 def create_post(title: str, author: str, description: str, content: str):
@@ -119,8 +119,8 @@ def render_post(id: str):
 class LoginUser(flask_login.UserMixin, database.Model):
 	__tablename__ = 'users'
 
-	id: Mapped[str] = mapped_column(primary_key=True)
-	password: Mapped[str] = mapped_column()
+	id: Mapped[str] = mapped_column(primary_key=True, nullable=False)
+	password: Mapped[str] = mapped_column(nullable=False)
 
 
 @login_manager.user_loader
@@ -206,6 +206,27 @@ def create_server():
 	# --------------------------------------- #
 	# API User Routes
 	# --------------------------------------- #
+	@server.route('/api/v0/users/register', methods=['POST'])
+	def route_api_user_register():
+		try:
+			username = request.form['username']
+			password = request.form['password']
+		except KeyError:
+			abort(400)
+
+		if database.session.get(LoginUser, username):
+			abort(409)
+
+		new_user = LoginUser(
+			id = username,
+			password = password
+		)
+		database.session.add(new_user)
+		database.session.commit()
+
+		return Response(status=200)
+
+
 	@server.route('/api/v0/users/login', methods=['POST'])
 	def route_api_user_login():
 		try:
@@ -230,6 +251,11 @@ def create_server():
 	# --------------------------------------- #
 	# Normal User Routes
 	# --------------------------------------- #
+	@server.route('/users/register')
+	def route_user_register():
+		return render_template('register.html', siteName=site_name, pageName='Register')
+
+
 	@server.route('/users/login')
 	def route_user_login():
 		return render_template('login.html', siteName=site_name, pageName='Login')
