@@ -3,6 +3,7 @@ from flask import (
 	request,
 	Response,
 	render_template,
+	stream_template,
 	jsonify,
 	abort
 )
@@ -103,7 +104,7 @@ def get_post(id: str):
 def render_post(id: str):
 	post_info, post_content = get_post(id)
 
-	return render_template(
+	return stream_template(
 		'post.html',
 
 		siteName = site_name,
