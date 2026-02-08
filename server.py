@@ -187,9 +187,7 @@ def create_server():
 		user_role = roles[flask_login.current_user.role]
 		user_permissions = user_role['permissions']
 
-		try:
-			user_permissions['WRITE_POSTS']
-		except KeyError:
+		if 'WRITE_POSTS' not in user_permissions:
 			abort(403)
 
 		request_json = request.get_json()
