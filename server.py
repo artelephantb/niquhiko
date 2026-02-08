@@ -200,7 +200,10 @@ def create_server():
 		if 'WRITE_POSTS' not in user_permissions:
 			abort(403)
 
+		print(request.headers)
+		print(request.get_data())
 		request_json = request.get_json()
+		print(request_json)
 
 		try:
 			title = request_json['title']
@@ -242,6 +245,10 @@ def create_server():
 			user_logged_in = False
 
 		return render_template('homepage.html', siteName=site_name, user=user_logged_in, footnote=footnote)
+
+	@server.route('/posts/create')
+	def route_create_post():
+		return render_template('create_post.html', siteName=site_name, user=True, footnote=footnote)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):

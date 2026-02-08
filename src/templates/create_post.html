@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+
+{% set pageName = 'Create Post' %}
+{% set selectedTab = 'create_post' %}
+
+{% block body %}
+	<input id='postTitle' type='text' placeholder='Title' style='width: 100%;'/>
+	<textarea id='postDescription' placeholder='Description' style='height: 100px;'></textarea>
+	<textarea id='postContent' placeholder='Content' style='height: 400px;'></textarea>
+	<button onclick='fetch("/api/v0/posts/create", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				title: document.getElementById("postTitle").value,
+				description: document.getElementById("postDescription").value,
+				content: document.getElementById("postContent").value
+			})
+		})
+		.then(() => {
+			window.location.href = "/"
+		})
+	'>Post</button>
+{% endblock %}
