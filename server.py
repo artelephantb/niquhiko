@@ -24,6 +24,7 @@ import secrets
 # Site Configuration
 # --------------------------------------- #
 site_name = 'Niquhiko'
+footnote = 'My footnote'
 
 roles = {
 	'user': {
@@ -113,12 +114,21 @@ def get_post(id: str):
 def render_post(id: str):
 	post_info, post_content = get_post(id)
 
+	try:
+		flask_login.current_user.id
+		user_logged_in = True
+	except AttributeError:
+		user_logged_in = False
+
 	return stream_template(
 		'post.html',
 
 		siteName = site_name,
 		pageName = post_info.title,
-		content = post_content
+		content = post_content,
+		footnote = footnote,
+
+		user = user_logged_in
 	)
 
 
@@ -231,7 +241,7 @@ def create_server():
 		except AttributeError:
 			user_logged_in = False
 
-		return render_template('homepage.html', siteName=site_name, user=user_logged_in)
+		return render_template('homepage.html', siteName=site_name, user=user_logged_in, footnote=footnote)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -283,16 +293,16 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/users/register')
 	def route_user_register():
-		return render_template('users/register.html', siteName=site_name)
+		return render_template('users/register.html', siteName=site_name, footnote=footnote)
 
 
 	@server.route('/users/login')
 	def route_user_login():
-		return render_template('users/login.html', siteName=site_name)
+		return render_template('users/login.html', siteName=site_name, footnote=footnote)
 
 	@server.route('/users/logout')
 	def route_user_logout():
-		return render_template('users/logout.html', siteName=site_name, user=True)
+		return render_template('users/logout.html', siteName=site_name, user=True, footnote=footnote)
 
 
 	return server

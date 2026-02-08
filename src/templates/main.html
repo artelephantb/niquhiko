@@ -11,7 +11,12 @@
 		</nav>
 		<h1>{{ pageName }}</h1>
 	</header>
-	{% block body %}
-	{% endblock %}
+	<main>
+		{% block body %}
+		{% endblock %}
+	</main>
+	<footer>
+		<p>{{ footnote }}</p>
+	</footer>
 </body>
 </html>
