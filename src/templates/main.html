@@ -2,9 +2,15 @@
 <html>
 <head>
 	<title>{{ siteName }} - {{ pageName }}</title>
+	<link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-	<h1>{{ pageName }}</h1>
+	<header>
+		<nav>
+			{% include 'navbar.html' %}
+		</nav>
+		<h1>{{ pageName }}</h1>
+	</header>
 	{% block body %}
 	{% endblock %}
 </body>

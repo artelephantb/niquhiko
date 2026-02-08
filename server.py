@@ -225,7 +225,7 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/')
 	def route_homepage():
-		return render_template('main.html', siteName=site_name, pageName='Homepage')
+		return render_template('homepage.html', siteName=site_name)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -277,16 +277,16 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/users/register')
 	def route_user_register():
-		return render_template('register.html', siteName=site_name, pageName='Register')
+		return render_template('users/register.html', siteName=site_name)
 
 
 	@server.route('/users/login')
 	def route_user_login():
-		return render_template('login.html', siteName=site_name, pageName='Login')
+		return render_template('users/login.html', siteName=site_name)
 
 	@server.route('/users/logout')
 	def route_user_logout():
-		return render_template('logout.html', siteName=site_name, pageName='Logout')
+		return render_template('users/logout.html', siteName=site_name)
 
 
 	return server

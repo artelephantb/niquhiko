@@ -1,5 +1,8 @@
 {% extends 'main.html' %}
 
+{% set pageName = 'Logout' %}
+{% set selectedTab = 'logout' %}
+
 {% block body %}
 <a href='/api/v0/users/logout'><button>Logout?</button></a>
 {% endblock %}
