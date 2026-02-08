@@ -25,6 +25,15 @@ import secrets
 # --------------------------------------- #
 site_name = 'Niquhiko'
 
+roles = {
+	'user': {
+		'permissions': {}
+	},
+	'admin': {
+		'permissions': {'WRITE_POSTS'}
+	}
+}
+
 allowed_clean_html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
 
 allowed_clean_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -175,6 +184,14 @@ def create_server():
 	@server.route('/api/v0/posts/create', methods=['POST'])
 	@flask_login.login_required
 	def route_api_create_post():
+		user_role = roles[flask_login.current_user.role]
+		user_permissions = user_role['permissions']
+
+		try:
+			user_permissions['WRITE_POSTS']
+		except KeyError:
+			abort(403)
+
 		request_json = request.get_json()
 
 		try:
