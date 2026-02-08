@@ -86,7 +86,7 @@ def get_cleaned_string(name: str, allowed_characters=allowed_clean_characters, s
 # --------------------------------------- #
 # API Routes
 # --------------------------------------- #
-@server.route('/api/v0/post/create', methods=['POST'])
+@server.route('/api/v0/posts/create', methods=['POST'])
 def route_create_post():
 	request_json = request.get_json()
 
