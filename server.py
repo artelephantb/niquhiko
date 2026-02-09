@@ -19,6 +19,8 @@ import bleach
 import os
 import secrets
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 # --------------------------------------- #
 # Site Configuration
@@ -152,6 +154,12 @@ class LoginUser(flask_login.UserMixin, database.Model):
 	password: Mapped[str] = mapped_column(nullable=False)
 	role: Mapped[str] = mapped_column(nullable=False)
 
+	def set_password(self, password: str):
+		self.password = generate_password_hash(password)
+
+	def check_password(self, password: str):
+		return check_password_hash(self.password, password)
+
 
 @login_manager.user_loader
 def user_loader(username):
@@ -173,9 +181,11 @@ def register_user(username: str, password: str, role: str):
 
 	new_user = LoginUser(
 		id = username,
-		password = password,
 		role = role
 	)
+
+	new_user.set_password(password)
+
 	database.session.add(new_user)
 	database.session.commit()
 
@@ -346,7 +356,7 @@ def create_server():
 			abort(400)
 
 		user_info = database.get_or_404(LoginUser, username)
-		if password != user_info.password:
+		if not user_info.check_password(password):
 			abort(400)
 
 		flask_login.login_user(user_info)
