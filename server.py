@@ -174,7 +174,7 @@ def register_user(username: str, password: str, role: str):
 	new_user = LoginUser(
 		id = username,
 		password = password,
-		role = 'user'
+		role = role
 	)
 	database.session.add(new_user)
 	database.session.commit()
@@ -201,6 +201,24 @@ def create_server():
 	# --------------------------------------- #
 	# API Routes
 	# --------------------------------------- #
+	@server.route('/api/v0/startup', methods=['POST'])
+	def route_api_startup():
+		if len(LoginUser.query.all()) != 0:
+			abort(403)
+
+		try:
+			username = request.form['username']
+			password = request.form['password']
+		except KeyError:
+			abort(400)
+
+		try:
+			register_user(username, password, 'admin')
+		except FileExistsError:
+			abort(409)
+
+		return Response(status=200)
+
 	@server.route('/api/v0/posts/create', methods=['POST'])
 	@flask_login.login_required
 	def route_api_create_post():
@@ -243,6 +261,13 @@ def create_server():
 	# --------------------------------------- #
 	# Normal Routes
 	# --------------------------------------- #
+	@server.route('/startup')
+	def route_startup():
+		if len(LoginUser.query.all()) != 0:
+			abort(403)
+
+		return render_template('startup.html', siteName=site_name, footnote=footnote)
+
 	@server.route('/')
 	def route_homepage():
 		try:

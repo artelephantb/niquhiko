@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ siteName }} - Welcome!</title>
+	<link rel='stylesheet' href='https://cdn.simplecss.org/simple.min.css'/>
+	<link rel='stylesheet' href='/static/main.css'/>
+</head>
+<body>
+	<header>
+		<h1>Welcome!</h1>
+	</header>
+	<main>
+		<p>Create an admin user:</p>
+		<form action='/api/v0/startup' method='post'>
+			<input type='text' name='username' id='username' placeholder='Username'/>
+			<input type='password' name='password' id='password' placeholder='Password'/>
+			<input type='submit' name='submit' value='Register'/>
+		</form>
+	</main>
+	<footer>
+		<p>{{ footnote }}</p>
+	</footer>
+</body>
+</html>
