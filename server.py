@@ -284,6 +284,7 @@ def create_server():
 		user_permissions = user_role['permissions']
 
 		posts = DatabasePost.query.all()
+		posts.reverse()
 
 		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=footnote)
 
