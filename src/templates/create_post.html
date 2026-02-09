@@ -7,7 +7,13 @@
 	<p id='error' style='color: red;' hidden></p>
 	<input id='postTitle' type='text' placeholder='Title' style='width: 100%;'/>
 	<textarea id='postDescription' placeholder='Description' style='height: 100px;'></textarea>
-	<textarea id='postContent' placeholder='Content' style='height: 400px;'></textarea>
+
+	<div>
+		<code id='postContent'></code>
+		<br/>
+		<button onclick='openMarkdownEditor()'>Open Markdown Editor</button>
+	</div>
+
 	<button onclick='fetch("/api/v0/posts/create", {
 			method: "POST",
 			headers: {
@@ -16,7 +22,7 @@
 			body: JSON.stringify({
 				title: document.getElementById("postTitle").value,
 				description: document.getElementById("postDescription").value,
-				content: document.getElementById("postContent").value
+				content: document.getElementById("postContent").innerText
 			})
 		})
 		.then(response => {
@@ -33,4 +39,23 @@
 			}
 		})
 	'>Post</button>
+
+	<script src='https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js'></script>
+
+	<script>
+		const postContentReference = document.getElementById('postContent');
+		const stackedit = new Stackedit();
+
+		function openMarkdownEditor() {
+			stackedit.openFile({
+				content: {
+					text: postContentReference.innerText
+				}
+			});
+		}
+
+		stackedit.on('fileChange', file => {
+			postContentReference.innerText = file.content.text;
+		});
+	</script>
 {% endblock %}
