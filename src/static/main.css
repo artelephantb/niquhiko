@@ -1,3 +1,15 @@
 textarea {
 	resize: none;
 }
+
+.post {
+	margin-bottom: 15px;
+	padding: 10px;
+
+	background-color: var(--accent-bg);
+	border-radius: 10px;
+}
+
+.post p {
+	margin: 0;
+}

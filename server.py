@@ -200,10 +200,7 @@ def create_server():
 		if 'WRITE_POSTS' not in user_permissions:
 			abort(403)
 
-		print(request.headers)
-		print(request.get_data())
 		request_json = request.get_json()
-		print(request_json)
 
 		try:
 			title = request_json['title']
@@ -249,6 +246,18 @@ def create_server():
 	@server.route('/posts/create')
 	def route_create_post():
 		return render_template('create_post.html', siteName=site_name, user=True, footnote=footnote)
+
+	@server.route('/posts/')
+	def route_get_posts():
+		try:
+			flask_login.current_user.id
+			user_logged_in = True
+		except AttributeError:
+			user_logged_in = False
+
+		posts = DatabasePost.query.all()
+
+		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, footnote=footnote)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):

@@ -2,6 +2,10 @@
 		class='current'
 	{% endif %} href='/'>Home</a>
 
+<a {% if selectedTab == 'posts' %}
+		class='current'
+	{% endif %} href='/posts'>Posts</a>
+
 {% if user %}
 	<a {% if selectedTab == 'create_post' %}
 			class='current'

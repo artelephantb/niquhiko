@@ -20,7 +20,7 @@
 			})
 		})
 		.then(response => {
-			if (response.status == 200) window.location.href = "/"
+			if (response.status == 200) window.location.href = "/posts"
 			else if (response.status == 409) {
 				let errorReference = document.getElementById("error");
 				errorReference.hidden = false;

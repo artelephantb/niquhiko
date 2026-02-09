@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+
+{% set pageName = 'Posts' %}
+{% set selectedTab = 'posts' %}
+
+{% block body %}
+	{% for post in posts %}
+	<a href='{{ post.id }}'>
+		<div class='post'>
+			<div>
+				<p>{{ post.title }}</p>
+			</div>
+		</div>
+	</a>
+	{% endfor %}
+{% endblock %}
