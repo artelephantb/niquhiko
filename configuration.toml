@@ -1,0 +1,16 @@
+site_name = 'Niquhiko'
+footnote = 'My footnote'
+
+[allowed_clean]
+html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
+characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"/"
+letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+[roles.guest]
+permissions = []
+
+[roles.user]
+permissions = []
+
+[roles.admin]
+permissions = ['WRITE_POSTS']

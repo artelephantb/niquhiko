@@ -21,29 +21,25 @@ import secrets
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import tomli
+
 
 # --------------------------------------- #
 # Site Configuration
 # --------------------------------------- #
-site_name = 'Niquhiko'
-footnote = 'My footnote'
+with open('configuration.toml', 'rb') as file:
+	site_config = tomli.load(file)
 
-roles = {
-	'guest': {
-		'permissions': {}
-	},
-	'user': {
-		'permissions': {}
-	},
-	'admin': {
-		'permissions': {'WRITE_POSTS'}
-	}
-}
+site_name = site_config['site_name']
+footnote = site_config['footnote']
 
-allowed_clean_html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
+roles = site_config['roles']
 
-allowed_clean_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-allowed_clean_characters = allowed_clean_letters + '!?$%*&~`():\'"/'
+allowed_clean = site_config['allowed_clean']
+
+allowed_clean_html_tags = allowed_clean['html_tags']
+allowed_clean_letters = allowed_clean['letters']
+allowed_clean_characters = allowed_clean['characters']
 
 
 # --------------------------------------- #

@@ -1,8 +1,8 @@
 flask
 flask-sqlalchemy
-
 flask-login
 
 markdown
-
 bleach
+
+tomli
