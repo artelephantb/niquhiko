@@ -5,12 +5,6 @@
 
 {% block body %}
 	{% for post in posts %}
-	<a href='{{ post.id }}'>
-		<div class='post'>
-			<div>
-				<p>{{ post.title }}</p>
-			</div>
-		</div>
-	</a>
+		{% include 'post_banner.html' %}
 	{% endfor %}
 {% endblock %}

@@ -4,4 +4,9 @@
 {% set selectedTab = 'home' %}
 
 {% block body %}
+	{% for post in posts %}
+		{% with postId=post.id, postTitle=post.title %}
+			{% include 'post_banner.html' %}
+		{% endwith %}
+	{% endfor %}
 {% endblock %}
