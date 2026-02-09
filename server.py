@@ -338,8 +338,9 @@ def create_server():
 	@server.route('/api/v0/users/register', methods=['POST'])
 	def route_api_user_register():
 		try:
-			username = request.form['username']
-			password = request.form['password']
+			json_data = request.get_json()
+			username = json_data['username']
+			password = json_data['password']
 		except KeyError:
 			abort(400)
 
@@ -354,8 +355,9 @@ def create_server():
 	@server.route('/api/v0/users/login', methods=['POST'])
 	def route_api_user_login():
 		try:
-			username = request.form['username']
-			password = request.form['password']
+			json_data = request.get_json()
+			username = json_data['username']
+			password = json_data['password']
 		except KeyError:
 			abort(400)
 

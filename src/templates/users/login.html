@@ -4,7 +4,42 @@
 {% set selectedTab = 'login' %}
 
 {% block body %}
-	<form action='/api/v0/users/login' method='post'>
+	<p id='error' style='color: red;' hidden></p>
+	<form action='/api/v0/users/login' onsubmit='function submit(event) {
+		event.preventDefault();
+
+		let username = document.getElementById("username").value;
+		let password = document.getElementById("password").value;
+
+		fetch("/api/v0/users/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				username: username,
+				password: password
+			})
+		})
+		.then(response => {
+			if (response.status == 200) {
+				window.location.href = "/";
+			}
+			else if (response.status == 404) {
+				let errorReference = document.getElementById("error");
+				errorReference.hidden = false;
+				errorReference.innerText = "Incorrect username or password.";
+			}
+			else {
+				let errorReference = document.getElementById("error");
+				errorReference.hidden = false;
+				errorReference.innerText = "An unknown error has occured.";
+			}
+		});
+	}
+
+	return submit(event);'>
+
 		<input type='text' name='username' id='username' placeholder='Username'/>
 		<input type='password' name='password' id='password' placeholder='Password'/>
 		<input type='submit' name='submit' value='Login'/>
