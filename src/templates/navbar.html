@@ -7,9 +7,11 @@
 	{% endif %} href='/posts'>Posts</a>
 
 {% if user %}
-	<a {% if selectedTab == 'create_post' %}
-			class='current'
-		{% endif %} href='/posts/create'>Create Post</a>
+	{% if 'WRITE_POSTS' in permissions %}
+		<a {% if selectedTab == 'create_post' %}
+				class='current'
+			{% endif %} href='/posts/create'>Create Post</a>
+	{% endif %}
 	<a {% if selectedTab == 'logout' %}
 			class='current'
 		{% endif %} href='/users/logout'>Logout</a>

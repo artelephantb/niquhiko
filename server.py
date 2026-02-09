@@ -27,6 +27,9 @@ site_name = 'Niquhiko'
 footnote = 'My footnote'
 
 roles = {
+	'guest': {
+		'permissions': {}
+	},
 	'user': {
 		'permissions': {}
 	},
@@ -115,10 +118,14 @@ def render_post(id: str):
 	post_info, post_content = get_post(id)
 
 	try:
-		flask_login.current_user.id
+		user_id = flask_login.current_user.id
+		user_role = roles[flask_login.current_user.role]
 		user_logged_in = True
 	except AttributeError:
+		user_role = roles['guest']
 		user_logged_in = False
+
+	user_permissions = user_role['permissions']
 
 	return stream_template(
 		'post.html',
@@ -126,6 +133,9 @@ def render_post(id: str):
 		siteName = site_name,
 		pageName = post_info.title,
 		content = post_content,
+
+		permissions=user_permissions,
+
 		footnote = footnote,
 
 		user = user_logged_in
@@ -236,28 +246,46 @@ def create_server():
 	@server.route('/')
 	def route_homepage():
 		try:
-			flask_login.current_user.id
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
+			user_role = roles['guest']
 			user_logged_in = False
 
-		return render_template('homepage.html', siteName=site_name, user=user_logged_in, footnote=footnote)
+		user_permissions = user_role['permissions']
+
+		return render_template('homepage.html', siteName=site_name, user=user_logged_in, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/posts/create')
 	def route_create_post():
-		return render_template('create_post.html', siteName=site_name, user=True, footnote=footnote)
+		try:
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
+			user_logged_in = True
+		except AttributeError:
+			user_role = roles['guest']
+			user_logged_in = False
+
+		user_permissions = user_role['permissions']
+
+		return render_template('create_post.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/posts/')
 	def route_get_posts():
 		try:
-			flask_login.current_user.id
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
+			user_role = roles['guest']
 			user_logged_in = False
+
+		user_permissions = user_role['permissions']
 
 		posts = DatabasePost.query.all()
 
-		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, footnote=footnote)
+		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -309,16 +337,46 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/users/register')
 	def route_user_register():
-		return render_template('users/register.html', siteName=site_name, footnote=footnote)
+		try:
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
+			user_logged_in = True
+		except AttributeError:
+			user_role = roles['guest']
+			user_logged_in = False
+
+		user_permissions = user_role['permissions']
+
+		return render_template('users/register.html', siteName=site_name, permissions=user_permissions, footnote=footnote)
 
 
 	@server.route('/users/login')
 	def route_user_login():
-		return render_template('users/login.html', siteName=site_name, footnote=footnote)
+		try:
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
+			user_logged_in = True
+		except AttributeError:
+			user_role = roles['guest']
+			user_logged_in = False
+
+		user_permissions = user_role['permissions']
+
+		return render_template('users/login.html', siteName=site_name, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/users/logout')
 	def route_user_logout():
-		return render_template('users/logout.html', siteName=site_name, user=True, footnote=footnote)
+		try:
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
+			user_logged_in = True
+		except AttributeError:
+			user_role = roles['guest']
+			user_logged_in = False
+
+		user_permissions = user_role['permissions']
+
+		return render_template('users/logout.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
 
 
 	return server
