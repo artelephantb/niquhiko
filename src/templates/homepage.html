@@ -4,7 +4,8 @@
 {% set selectedTab = 'home' %}
 
 {% block body %}
-	{% for post in posts %}
+	<h3>Recent Posts</h3>
+	{% for post in recentPosts %}
 		{% with postId=post.id, postTitle=post.title %}
 			{% include 'post_banner.html' %}
 		{% endwith %}

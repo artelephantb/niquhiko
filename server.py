@@ -290,7 +290,11 @@ def create_server():
 
 		user_permissions = user_role['permissions']
 
-		return render_template('homepage.html', siteName=site_name, user=user_logged_in, permissions=user_permissions, footnote=footnote)
+		posts = DatabasePost.query.all()
+		posts.reverse()
+		posts = posts[0:3]
+
+		return render_template('homepage.html', siteName=site_name, user=user_logged_in, recentPosts=posts, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/posts/create')
 	def route_create_post():
