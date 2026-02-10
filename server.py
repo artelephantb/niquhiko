@@ -84,7 +84,7 @@ class DatabasePost(database.Model):
 	content_link: Mapped[str] = mapped_column(nullable=False)
 
 
-def create_post(title: str, author: str, description: str, content: str):
+def create_post(title: str, author: str = '(no author)', description: str = '(no description)', content: str = '(no content)'):
 	id = get_cleaned_string(title, allowed_characters=allowed_clean_letters, separator='-', all_lower=True)
 
 	with open(f'instance/posts/{id}', 'x') as file:
@@ -226,12 +226,15 @@ def create_server():
 		return Response(status=200)
 
 	@server.route('/api/v0/posts/create', methods=['POST'])
-	@flask_login.login_required
 	def route_api_create_post():
-		user_role = roles[flask_login.current_user.role]
+		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+
 		user_permissions = user_role['permissions']
 
-		if 'WRITE_POSTS' not in user_permissions:
+		if 'CAN_WRITE_POSTS' not in user_permissions:
 			abort(403)
 
 		request_json = request.get_json()
@@ -243,7 +246,10 @@ def create_server():
 		except KeyError:
 			return abort(400)
 
-		author = flask_login.current_user.id
+		try:
+			author = flask_login.current_user.id
+		except AttributeError:
+			author = '(no author)'
 
 		try:
 			create_post(title, author, description, content)
@@ -334,6 +340,16 @@ def create_server():
 	@server.route('/api/v0/users/register', methods=['POST'])
 	def route_api_user_register():
 		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+		
+		user_permissions = user_role['permissions']
+
+		if 'CAN_REGISTER' not in user_permissions:
+			abort(403)
+
+		try:
 			json_data = request.get_json()
 			username = json_data['username']
 			password = json_data['password']
@@ -351,6 +367,16 @@ def create_server():
 	@server.route('/api/v0/users/login', methods=['POST'])
 	def route_api_user_login():
 		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+		
+		user_permissions = user_role['permissions']
+
+		if 'CAN_LOGIN' not in user_permissions:
+			abort(403)
+
+		try:
 			json_data = request.get_json()
 			username = json_data['username']
 			password = json_data['password']
@@ -366,6 +392,16 @@ def create_server():
 
 	@server.route('/api/v0/users/logout', methods=['POST'])
 	def route_api_user_logout():
+		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+		
+		user_permissions = user_role['permissions']
+
+		if 'CAN_LOGOUT' not in user_permissions:
+			abort(403)
+
 		flask_login.logout_user()
 		return Response(status=200)
 

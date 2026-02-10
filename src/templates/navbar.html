@@ -6,19 +6,22 @@
 		class='current'
 	{% endif %} href='/posts'>Posts</a>
 
-{% if user %}
-	{% if 'WRITE_POSTS' in permissions %}
-		<a {% if selectedTab == 'create_post' %}
-				class='current'
-			{% endif %} href='/posts/create'>Create Post</a>
-	{% endif %}
+{% if 'CAN_WRITE_POSTS' in permissions %}
+	<a {% if selectedTab == 'create_post' %}
+			class='current'
+		{% endif %} href='/posts/create'>Create Post</a>
+{% endif %}
+{% if 'CAN_LOGOUT' in permissions %}
 	<a {% if selectedTab == 'logout' %}
 			class='current'
 		{% endif %} href='/users/logout'>Logout</a>
-{% else %}
+{% endif %}
+{% if 'CAN_LOGIN' in permissions %}
 	<a {% if selectedTab == 'login' %}
 			class='current'
 		{% endif %} href='/users/login'>Login</a>
+{% endif %}
+{% if 'CAN_REGISTER' in permissions %}
 	<a {% if selectedTab == 'register' %}
 			class='current'
 		{% endif %} href='/users/register'>Register</a>
