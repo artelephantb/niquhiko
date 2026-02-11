@@ -1,0 +1,10 @@
+<div>
+	{% if 'CAN_LIKE' in permissions %}
+		<button onclick='fetch("/api/v0/posts/{{ id }}/like")
+			.then(response => response.json())
+			.then(response => {
+				this.innerText = `Like (${response.likes})`;
+			});
+		'>Like ({{ like_count }})</button>
+	{% endif %}
+</div>

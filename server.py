@@ -82,6 +82,7 @@ class DatabasePost(database.Model):
 	author: Mapped[str] = mapped_column(nullable=False)
 	description: Mapped[str] = mapped_column(nullable=False)
 	content_link: Mapped[str] = mapped_column(nullable=False)
+	like_count: Mapped[int] = mapped_column(nullable=False)
 
 
 def create_post(title: str, author: str = '(no author)', description: str = '(no description)', content: str = '(no content)'):
@@ -95,7 +96,8 @@ def create_post(title: str, author: str = '(no author)', description: str = '(no
 		title = get_cleaned_string(title),
 		author = get_cleaned_string(author),
 		description = get_cleaned_string(description),
-		content_link = id
+		content_link = id,
+		like_count = 0
 	)
 
 	database.session.add(post)
@@ -128,9 +130,13 @@ def render_post(id: str):
 	return stream_template(
 		'post.html',
 
+		id = id,
+
 		siteName = site_name,
 		pageName = post_info.title,
 		content = post_content,
+
+		like_count = post_info.like_count,
 
 		permissions=user_permissions,
 
@@ -138,6 +144,14 @@ def render_post(id: str):
 
 		user = user_logged_in
 	)
+
+def like_post(id: str):
+	post_info = database.get_or_404(DatabasePost, id)
+
+	post_info.like_count += 1
+	database.session.commit()
+
+	return post_info.like_count
 
 
 # --------------------------------------- #
@@ -267,6 +281,24 @@ def create_server():
 			'author': post_info.author,
 			'description': post_info.description,
 			'content': post_content
+		})
+
+	@server.route('/api/v0/posts/<id>/like')
+	def route_api_like_post(id):
+		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+
+		user_permissions = user_role['permissions']
+
+		if 'CAN_LIKE' not in user_permissions:
+			abort(403)
+
+		likes = like_post(id)
+
+		return jsonify({
+			'likes': likes
 		})
 
 

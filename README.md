@@ -12,6 +12,7 @@ Niquhiko includes many customization options, including changing user permission
 - `CAN_LOGOUT`: Allows logouts.
 - `CAN_REGISTER`: Allows registration of accounts.
 - `CAN_WRITE_POSTS`: Allows writing posts.
+- `CAN_LIKE`: Allows liking posts.
 
 ## Attribution
 Look at `ATTRIBUTION.txt`.

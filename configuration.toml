@@ -7,10 +7,10 @@ characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 [roles.guest]
-permissions = ['CAN_LOGIN', 'CAN_REGISTER']
+permissions = ['CAN_LOGIN', 'CAN_REGISTER', 'CAN_LIKE']
 
 [roles.user]
-permissions = ['CAN_LOGOUT']
+permissions = ['CAN_LOGOUT', 'CAN_LIKE']
 
 [roles.admin]
-permissions = ['CAN_LOGOUT', 'CAN_WRITE_POSTS']
+permissions = ['CAN_LOGOUT', 'CAN_WRITE_POSTS', 'CAN_LIKE']
