@@ -6,3 +6,5 @@ markdown
 bleach
 
 tomli
+
+minify-html
