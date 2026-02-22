@@ -1,5 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 
+import sqlite3
+
 import os
 from shutil import rmtree
 
@@ -31,12 +33,23 @@ footnote = site_config['footnote']
 file_system_loader = FileSystemLoader('src/templates')
 environment = Environment(loader=file_system_loader)
 
+database = sqlite3.connect('instance/main.db')
+
 
 # --------------------------------------- #
-# Export homepage
+# Export: homepage
 # --------------------------------------- #
+with database:
+	database.row_factory = sqlite3.Row
+
+	cursor = database.cursor()
+	cursor.execute('SELECT * FROM posts')
+
+	posts = cursor.fetchmany(3)
+	posts.reverse()
+
 template = environment.get_template('homepage.html')
-output = template.render(siteName=site_name, user=False, recentPosts=[{'id': 'test', 'title': 'Test'}], permissions=[], footnote=footnote)
+output = template.render(siteName=site_name, user=False, recentPosts=posts, permissions=[], footnote=footnote)
 
 output = minify_html.minify(output)
 
@@ -44,10 +57,19 @@ with open('export/index.html', 'w') as file:
 	file.write(output)
 
 # --------------------------------------- #
-# Export all posts page
+# Export: all posts page
 # --------------------------------------- #
+with database:
+	database.row_factory = sqlite3.Row
+
+	cursor = database.cursor()
+	cursor.execute('SELECT * FROM posts')
+
+	posts = cursor.fetchall()
+	posts.reverse()
+
 template = environment.get_template('posts.html')
-output = template.render(siteName=site_name, user=False, permissions=[], footnote=footnote)
+output = template.render(siteName=site_name, posts=posts, user=False, permissions=[], footnote=footnote)
 
 output = minify_html.minify(output)
 
