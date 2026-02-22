@@ -214,6 +214,12 @@ def register_user(username: str, password: str, role: str):
 # --------------------------------------- #
 # File Storage
 # --------------------------------------- #
+class DatabaseFileStorage(database.Model):
+	__tablename__ = 'file_storage'
+
+	id: Mapped[str] = mapped_column(primary_key=True, nullable=False)
+	content_link: Mapped[str] = mapped_column(nullable=False)
+
 def is_allowed_file(filename: str):
 	return '.' in filename and \
 		filename.rsplit('.', 1)[1].lower() in allowed_file_extensions
@@ -539,6 +545,14 @@ def create_server():
 
 		file.save(os.path.join(server.config['UPLOAD_FOLDER'], filename))
 
+		file_storage = DatabaseFileStorage(
+			id = filename,
+			content_link = filename
+		)
+
+		database.session.add(file_storage)
+		database.session.commit()
+
 		return jsonify({
 			'location': filename
 		})
@@ -561,8 +575,9 @@ def create_server():
 		return render_template('file_upload.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
 
 	@server.route('/file_storage/<file>')
-	def route_download_file(file):
-		return send_from_directory(server.config['UPLOAD_FOLDER'], file)
+	def route_get_file(file):
+		file_info = database.get_or_404(DatabaseFileStorage, file)
+		return send_from_directory(server.config['UPLOAD_FOLDER'], file_info.content_link)
 
 
 	return server
