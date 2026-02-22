@@ -2,6 +2,9 @@ from jinja2 import Environment, FileSystemLoader
 
 import sqlite3
 
+from markdown import markdown
+import bleach
+
 import os
 from shutil import rmtree
 
@@ -30,6 +33,12 @@ with open('configuration.toml', 'rb') as file:
 site_name = site_config['site_name']
 footnote = site_config['footnote']
 
+allowed_clean = site_config['allowed_clean']
+
+allowed_clean_html_tags = allowed_clean['html_tags']
+allowed_clean_letters = allowed_clean['letters']
+allowed_clean_characters = allowed_clean['characters']
+
 file_system_loader = FileSystemLoader('src/templates')
 environment = Environment(loader=file_system_loader)
 
@@ -48,7 +57,7 @@ with open('export/static/main.css', 'w') as file:
 	file.write(stylesheet)
 
 # --------------------------------------- #
-# Export: homepage
+# Export: Homepage
 # --------------------------------------- #
 with database:
 	database.row_factory = sqlite3.Row
@@ -68,7 +77,7 @@ with open('export/index.html', 'w') as file:
 	file.write(output)
 
 # --------------------------------------- #
-# Export: all posts page
+# Export: All posts page
 # --------------------------------------- #
 with database:
 	database.row_factory = sqlite3.Row
@@ -88,3 +97,48 @@ os.mkdir('export/posts')
 
 with open('export/posts/index.html', 'w') as file:
 	file.write(output)
+
+# --------------------------------------- #
+# Export: Post pages
+# --------------------------------------- #
+with database:
+	database.row_factory = sqlite3.Row
+
+	cursor = database.cursor()
+	cursor.execute('SELECT * FROM posts')
+
+	posts = cursor.fetchall()
+
+template = environment.get_template('post.html')
+
+for post_info in posts:
+	with open(f'instance/posts/{post_info['content_link']}', 'r') as file:
+		post_content = file.read()
+
+	
+
+	post_content = markdown(post_content)
+	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags)
+
+	output = template.render(
+		id = post_info['id'],
+
+		siteName = site_name,
+		pageName = post_info['title'],
+		content = post_content,
+
+		like_count = post_info['like_count'],
+
+		permissions=[],
+
+		footnote = footnote,
+
+		user = False
+	)
+
+	output = minify_html.minify(output)
+
+	os.mkdir(f'export/posts/{post_info['id']}')
+
+	with open(f'export/posts/{post_info['id']}/index.html', 'w') as file:
+		file.write(output)
