@@ -11,6 +11,11 @@
 			class='current'
 		{% endif %} href='/posts/create'>Create Post</a>
 {% endif %}
+{% if 'CAN_UPLOAD_FILES' in permissions %}
+	<a {% if selectedTab == 'upload_file' %}
+			class='current'
+		{% endif %} href='/file_storage/upload'>Upload File</a>
+{% endif %}
 {% if 'CAN_LOGOUT' in permissions %}
 	<a {% if selectedTab == 'logout' %}
 			class='current'

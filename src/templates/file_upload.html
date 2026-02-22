@@ -1,0 +1,43 @@
+{% extends 'main.html' %}
+
+{% set pageName = 'File Upload' %}
+{% set selectedTab = 'file_upload' %}
+
+{% block body %}
+	<p id='error' style='color: red;' hidden></p>
+	<form>
+		<input id='file' name='file' type='file'/>
+	</form>
+
+	<button onclick='
+		let errorReference = document.getElementById("error");
+
+		let fileInputReference = document.getElementById("file");
+		let uploadedFileReference = fileInputReference.files[0];
+
+		let formData = new FormData();
+		formData.append(fileInputReference.name, uploadedFileReference, uploadedFileReference.name);
+
+		const xmlHttpRequest = new XMLHttpRequest();
+		xmlHttpRequest.open("POST", "/api/v0/file_storage/upload", true);
+		xmlHttpRequest.send(formData);
+
+		xmlHttpRequest.onload = () => {
+			switch (xmlHttpRequest.status) {
+				case 200:
+					let response = JSON.parse(xmlHttpRequest.response);
+					window.location.href = `/file_storage/${response.location}`;
+					break;
+
+				case 409:
+					errorReference.hidden = false;
+					errorReference.innerText = "Filename already taken.";
+					break;
+
+				default:
+					errorReference.hidden = false;
+					errorReference.innerText = "An unknown error has occured.";
+			}
+		}
+	'>Upload</button>
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import (
 	Flask,
 	request,
 	Response,
+	send_from_directory,
 	render_template,
 	stream_template,
 	jsonify,
@@ -20,6 +21,7 @@ import os
 import secrets
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 import tomli
 
@@ -38,14 +40,23 @@ roles = site_config['roles']
 allowed_clean = site_config['allowed_clean']
 
 allowed_clean_html_tags = allowed_clean['html_tags']
+allowed_clean_html_attributes = allowed_clean['html_attributes']
+
 allowed_clean_letters = allowed_clean['letters']
 allowed_clean_characters = allowed_clean['characters']
+
+allowed_file_extensions = allowed_clean['allowed_file_extensions']
 
 
 # --------------------------------------- #
 # Setup
 # --------------------------------------- #
 os.makedirs('instance/posts', exist_ok=True)
+
+try:
+	os.mkdir('instance/uploads')
+except FileExistsError:
+	pass
 
 
 database = SQLAlchemy()
@@ -110,7 +121,7 @@ def get_post(id: str):
 		post_content = file.read()
 
 	post_content = markdown(post_content)
-	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags)
+	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags, attributes=allowed_clean_html_attributes)
 
 	return post_info, post_content
 
@@ -201,6 +212,14 @@ def register_user(username: str, password: str, role: str):
 
 
 # --------------------------------------- #
+# File Storage
+# --------------------------------------- #
+def is_allowed_file(filename: str):
+	return '.' in filename and \
+		filename.rsplit('.', 1)[1].lower() in allowed_file_extensions
+
+
+# --------------------------------------- #
 # Server
 # --------------------------------------- #
 def create_server():
@@ -209,6 +228,7 @@ def create_server():
 	server.secret_key = secrets.token_hex(16)
 	server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 	server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+	server.config['UPLOAD_FOLDER'] = 'instance/uploads'
 
 	database.init_app(server)
 	login_manager.init_app(server)
@@ -483,6 +503,66 @@ def create_server():
 		user_permissions = user_role['permissions']
 
 		return render_template('users/logout.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
+
+	# --------------------------------------- #
+	# API File Storage Routes
+	# --------------------------------------- #
+	@server.route('/api/v0/file_storage/upload', methods=['POST'])
+	def route_api_upload_file():
+		try:
+			user_role = roles[flask_login.current_user.role]
+		except AttributeError:
+			user_role = roles['guest']
+
+		user_permissions = user_role['permissions']
+
+		if 'CAN_UPLOAD_FILES' not in user_permissions:
+			abort(403)
+
+
+		if 'file' not in request.files:
+			abort(400)
+
+		file = request.files['file']
+
+		if file.filename == '':
+			abort(400)
+		if not file:
+			abort(400)
+		if not is_allowed_file(file.filename):
+			abort(400)
+
+		filename = secure_filename(file.filename)
+
+		if filename in os.listdir(server.config['UPLOAD_FOLDER']):
+			abort(409)
+
+		file.save(os.path.join(server.config['UPLOAD_FOLDER'], filename))
+
+		return jsonify({
+			'location': filename
+		})
+
+	# --------------------------------------- #
+	# Normal File Storage Routes
+	# --------------------------------------- #
+	@server.route('/file_storage/upload')
+	def route_upload_file():
+		try:
+			user_id = flask_login.current_user.id
+			user_role = roles[flask_login.current_user.role]
+			user_logged_in = True
+		except AttributeError:
+			user_role = roles['guest']
+			user_logged_in = False
+
+		user_permissions = user_role['permissions']
+
+		return render_template('file_upload.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
+
+	@server.route('/file_storage/<file>')
+	def route_download_file(file):
+		return send_from_directory(server.config['UPLOAD_FOLDER'], file)
 
 
 	return server
