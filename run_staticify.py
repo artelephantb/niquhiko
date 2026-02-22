@@ -37,6 +37,17 @@ database = sqlite3.connect('instance/main.db')
 
 
 # --------------------------------------- #
+# Export: Stylesheet
+# --------------------------------------- #
+with open('src/static/main.css', 'r') as file:
+	stylesheet = file.read()
+
+os.mkdir('export/static')
+
+with open('export/static/main.css', 'w') as file:
+	file.write(stylesheet)
+
+# --------------------------------------- #
 # Export: homepage
 # --------------------------------------- #
 with database:
