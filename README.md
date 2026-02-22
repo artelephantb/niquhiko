@@ -14,5 +14,8 @@ Niquhiko includes many customization options, including changing user permission
 - `CAN_WRITE_POSTS`: Allows writing posts.
 - `CAN_LIKE`: Allows liking posts.
 
+## Static Generator
+Niquhiko includes a static site generator `run_staticify.py` to convert the site into static files. Converted files can be found in the `export` folder.
+
 ## Attribution
 Look at `ATTRIBUTION.txt`.
