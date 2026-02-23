@@ -28,7 +28,7 @@ disabled = 'rgb(15, 15, 15)'
 # Allowed Clean
 # --------------------------------------- #
 [allowed_clean]
-html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
+html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre', 'video', 'audio', 'source']
 characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"/"
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -36,7 +36,13 @@ allowed_file_extensions = ['txt', 'md', 'png', 'jpg', 'jpeg', 'gif']
 
 [allowed_clean.html_attributes]
 img = ['src']
+
 a = ['href']
+
+video = ['controls']
+audio = ['controls']
+
+source = ['src']
 
 
 # --------------------------------------- #
