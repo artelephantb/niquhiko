@@ -5,12 +5,12 @@ import sqlite3
 from markdown import markdown
 import bleach
 
+import minify_html
+
 import os
 from shutil import rmtree, copyfile, copytree
 
-import tomli
-
-import minify_html
+from load_config import Config
 
 
 # --------------------------------------- #
@@ -27,33 +27,8 @@ os.mkdir('export')
 # --------------------------------------- #
 # Setup
 # --------------------------------------- #
-with open('configuration.toml', 'rb') as file:
-	site_config = tomli.load(file)
-
-site_name = site_config['site_name']
-footnote = site_config['footnote']
-
-site_colors = site_config['site_colors']
-
-site_color_background = site_colors['background']
-site_color_background_accent = site_colors['background_accent']
-
-site_color_accent = site_colors['accent']
-site_color_accent_hover = site_colors['accent_hover']
-
-allowed_clean = site_config['allowed_clean']
-
-allowed_clean_html_tags = allowed_clean['html_tags']
-allowed_clean_html_attributes = allowed_clean['html_attributes']
-
-allowed_clean_letters = allowed_clean['letters']
-allowed_clean_characters = allowed_clean['characters']
-
-link_badges_dict = site_config['link_badges']
-link_badges = []
-
-for badge_key in link_badges_dict.keys():
-	link_badges.append(link_badges_dict[badge_key])
+config = Config()
+config.load('configuration.toml')
 
 
 file_system_loader = FileSystemLoader('src/templates')
@@ -72,7 +47,7 @@ copytree('src/static', 'export/static')
 # Export: Stylesheet
 # --------------------------------------- #
 template = environment.get_template('main.css')
-output = template.render(colorBackground=site_color_background, colorBackgroundAccent=site_color_background_accent, colorAccent=site_color_accent, colorAccentHover=site_color_accent_hover)
+output = template.render(colorBackground=config.site_color_background, colorBackgroundAccent=config.site_color_background_accent, colorAccent=config.site_color_accent, colorAccentHover=config.site_color_accent_hover)
 
 with open('export/main.css', 'w') as file:
 	file.write(output)
@@ -90,7 +65,7 @@ with database:
 	posts.reverse()
 
 template = environment.get_template('homepage.html')
-output = template.render(siteName=site_name, user=False, recentPosts=posts, permissions=[], footnote=footnote, linkBadges=link_badges)
+output = template.render(siteName=config.site_name, user=False, recentPosts=posts, permissions=[], footnote=config.footnote, linkBadges=config.link_badges)
 
 output = minify_html.minify(output)
 
@@ -110,7 +85,7 @@ with database:
 	posts.reverse()
 
 template = environment.get_template('posts.html')
-output = template.render(siteName=site_name, posts=posts, user=False, permissions=[], footnote=footnote, linkBadges=link_badges)
+output = template.render(siteName=config.site_name, posts=posts, user=False, permissions=[], footnote=config.footnote, linkBadges=config.link_badges)
 
 output = minify_html.minify(output)
 
@@ -137,12 +112,12 @@ for post_info in posts:
 		post_content = file.read()
 
 	post_content = markdown(post_content)
-	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags, attributes=allowed_clean_html_attributes)
+	post_content = bleach.clean(post_content, tags=config.allowed_clean_html_tags, attributes=config.allowed_clean_html_attributes)
 
 	output = template.render(
 		id = post_info['id'],
 
-		siteName = site_name,
+		siteName = config.site_name,
 		pageName = post_info['title'],
 		content = post_content,
 
@@ -150,11 +125,11 @@ for post_info in posts:
 
 		permissions=[],
 
-		footnote = footnote,
+		footnote = config.footnote,
 
 		user = False,
 
-		linkBadges=link_badges
+		linkBadges=config.link_badges
 	)
 
 	output = minify_html.minify(output)

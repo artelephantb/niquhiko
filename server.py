@@ -23,43 +23,14 @@ import secrets
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-import tomli
+from load_config import Config
 
 
 # --------------------------------------- #
 # Site Configuration
 # --------------------------------------- #
-with open('configuration.toml', 'rb') as file:
-	site_config = tomli.load(file)
-
-site_name = site_config['site_name']
-footnote = site_config['footnote']
-
-site_colors = site_config['site_colors']
-
-site_color_background = site_colors['background']
-site_color_background_accent = site_colors['background_accent']
-
-site_color_accent = site_colors['accent']
-site_color_accent_hover = site_colors['accent_hover']
-
-roles = site_config['roles']
-
-allowed_clean = site_config['allowed_clean']
-
-allowed_clean_html_tags = allowed_clean['html_tags']
-allowed_clean_html_attributes = allowed_clean['html_attributes']
-
-allowed_clean_letters = allowed_clean['letters']
-allowed_clean_characters = allowed_clean['characters']
-
-allowed_file_extensions = allowed_clean['allowed_file_extensions']
-
-link_badges_dict = site_config['link_badges']
-link_badges = []
-
-for badge_key in link_badges_dict.keys():
-	link_badges.append(link_badges_dict[badge_key])
+config = Config()
+config.load('configuration.toml')
 
 
 # --------------------------------------- #
@@ -80,7 +51,7 @@ login_manager = flask_login.LoginManager()
 # --------------------------------------- #
 # Sanatizers
 # --------------------------------------- #
-def get_cleaned_string(name: str, allowed_characters=allowed_clean_characters, separator=' ', all_lower=False):
+def get_cleaned_string(name: str, allowed_characters=config.allowed_clean_characters, separator=' ', all_lower=False):
 	if all_lower:
 		name = name.lower()
 	name = name.replace('  ', '')
@@ -111,7 +82,7 @@ class DatabasePost(database.Model):
 
 
 def create_post(title: str, author: str = '(no author)', description: str = '(no description)', content: str = '(no content)'):
-	id = get_cleaned_string(title, allowed_characters=allowed_clean_letters, separator='-', all_lower=True)
+	id = get_cleaned_string(title, allowed_characters=config.allowed_clean_letters, separator='-', all_lower=True)
 
 	with open(f'instance/posts/{id}', 'x') as file:
 		file.write(content)
@@ -135,7 +106,7 @@ def get_post(id: str):
 		post_content = file.read()
 
 	post_content = markdown(post_content)
-	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags, attributes=allowed_clean_html_attributes)
+	post_content = bleach.clean(post_content, tags=config.allowed_clean_html_tags, attributes=config.allowed_clean_html_attributes)
 
 	return post_info, post_content
 
@@ -144,10 +115,10 @@ def render_post(id: str):
 
 	try:
 		user_id = flask_login.current_user.id
-		user_role = roles[flask_login.current_user.role]
+		user_role = config.roles[flask_login.current_user.role]
 		user_logged_in = True
 	except AttributeError:
-		user_role = roles['guest']
+		user_role = config.roles['guest']
 		user_logged_in = False
 
 	user_permissions = user_role['permissions']
@@ -157,7 +128,7 @@ def render_post(id: str):
 
 		id = id,
 
-		siteName = site_name,
+		siteName = config.site_name,
 		pageName = post_info.title,
 		content = post_content,
 
@@ -165,11 +136,11 @@ def render_post(id: str):
 
 		permissions=user_permissions,
 
-		footnote = footnote,
+		footnote = config.footnote,
 
 		user = user_logged_in,
 
-		linkBadges=link_badges
+		linkBadges=config.link_badges
 	)
 
 def like_post(id: str):
@@ -238,7 +209,7 @@ class DatabaseFileStorage(database.Model):
 
 def is_allowed_file(filename: str):
 	return '.' in filename and \
-		filename.rsplit('.', 1)[1].lower() in allowed_file_extensions
+		filename.rsplit('.', 1)[1].lower() in config.allowed_file_extensions
 
 
 # --------------------------------------- #
@@ -284,9 +255,9 @@ def create_server():
 	@server.route('/api/v0/posts/create', methods=['POST'])
 	def route_api_create_post():
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 
 		user_permissions = user_role['permissions']
 
@@ -328,9 +299,9 @@ def create_server():
 	@server.route('/api/v0/posts/<id>/like')
 	def route_api_like_post(id):
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 
 		user_permissions = user_role['permissions']
 
@@ -349,7 +320,7 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/main.css')
 	def route_main_css():
-		stylesheet = render_template('main.css', colorBackground=site_color_background, colorBackgroundAccent=site_color_background_accent, colorAccent=site_color_accent, colorAccentHover=site_color_accent_hover)
+		stylesheet = render_template('main.css', colorBackground=config.site_color_background, colorBackgroundAccent=config.site_color_background_accent, colorAccent=config.site_color_accent, colorAccentHover=config.site_color_accent_hover)
 		return Response(stylesheet, status=200, headers={'Content-Type': 'text/css', 'Cache-Control': 'max-age=250000'})
 
 	@server.route('/startup')
@@ -357,16 +328,16 @@ def create_server():
 		if len(LoginUser.query.all()) != 0:
 			abort(403)
 
-		return render_template('startup.html', siteName=site_name, footnote=footnote, linkBadges=link_badges)
+		return render_template('startup.html', siteName=config.site_name, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/')
 	def route_homepage():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
@@ -375,30 +346,30 @@ def create_server():
 		posts.reverse()
 		posts = posts[0:3]
 
-		return render_template('homepage.html', siteName=site_name, user=user_logged_in, recentPosts=posts, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('homepage.html', siteName=config.site_name, user=user_logged_in, recentPosts=posts, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/posts/create')
 	def route_create_post():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
 
-		return render_template('create_post.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('create_post.html', siteName=config.site_name, user=True, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/posts/')
 	def route_get_posts():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
@@ -406,7 +377,7 @@ def create_server():
 		posts = DatabasePost.query.all()
 		posts.reverse()
 
-		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('posts.html', siteName=config.site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -419,9 +390,9 @@ def create_server():
 	@server.route('/api/v0/users/register', methods=['POST'])
 	def route_api_user_register():
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 		
 		user_permissions = user_role['permissions']
 
@@ -446,9 +417,9 @@ def create_server():
 	@server.route('/api/v0/users/login', methods=['POST'])
 	def route_api_user_login():
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 		
 		user_permissions = user_role['permissions']
 
@@ -472,9 +443,9 @@ def create_server():
 	@server.route('/api/v0/users/logout', methods=['POST'])
 	def route_api_user_logout():
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 		
 		user_permissions = user_role['permissions']
 
@@ -492,44 +463,44 @@ def create_server():
 	def route_user_register():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
 
-		return render_template('users/register.html', siteName=site_name, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('users/register.html', siteName=config.site_name, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 
 	@server.route('/users/login')
 	def route_user_login():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
 
-		return render_template('users/login.html', siteName=site_name, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('users/login.html', siteName=config.site_name, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/users/logout')
 	def route_user_logout():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
 
-		return render_template('users/logout.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
+		return render_template('users/logout.html', siteName=config.site_name, user=True, permissions=user_permissions, footnote=config.footnote)
 
 	# --------------------------------------- #
 	# API File Storage Routes
@@ -537,9 +508,9 @@ def create_server():
 	@server.route('/api/v0/file_storage/upload', methods=['POST'])
 	def route_api_upload_file():
 		try:
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 
 		user_permissions = user_role['permissions']
 
@@ -585,15 +556,15 @@ def create_server():
 	def route_upload_file():
 		try:
 			user_id = flask_login.current_user.id
-			user_role = roles[flask_login.current_user.role]
+			user_role = config.roles[flask_login.current_user.role]
 			user_logged_in = True
 		except AttributeError:
-			user_role = roles['guest']
+			user_role = config.roles['guest']
 			user_logged_in = False
 
 		user_permissions = user_role['permissions']
 
-		return render_template('file_upload.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
+		return render_template('file_upload.html', siteName=config.site_name, user=True, permissions=user_permissions, footnote=config.footnote, linkBadges=config.link_badges)
 
 	@server.route('/file_storage/<file>')
 	def route_get_file(file):
