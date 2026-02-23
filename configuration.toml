@@ -17,6 +17,7 @@ allowed_file_extensions = ['txt', 'md', 'png', 'jpg', 'jpeg', 'gif']
 
 [allowed_clean.html_attributes]
 img = ['src']
+a = ['href']
 
 [roles.guest]
 permissions = ['CAN_LOGIN', 'CAN_REGISTER', 'CAN_LIKE']
