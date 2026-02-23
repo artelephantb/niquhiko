@@ -167,7 +167,9 @@ def render_post(id: str):
 
 		footnote = footnote,
 
-		user = user_logged_in
+		user = user_logged_in,
+
+		linkBadges=link_badges
 	)
 
 def like_post(id: str):

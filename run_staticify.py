@@ -6,7 +6,7 @@ from markdown import markdown
 import bleach
 
 import os
-from shutil import rmtree, copyfile
+from shutil import rmtree, copyfile, copytree
 
 import tomli
 
@@ -49,10 +49,23 @@ allowed_clean_html_attributes = allowed_clean['html_attributes']
 allowed_clean_letters = allowed_clean['letters']
 allowed_clean_characters = allowed_clean['characters']
 
+link_badges_dict = site_config['link_badges']
+link_badges = []
+
+for badge_key in link_badges_dict.keys():
+	link_badges.append(link_badges_dict[badge_key])
+
+
 file_system_loader = FileSystemLoader('src/templates')
 environment = Environment(loader=file_system_loader)
 
 database = sqlite3.connect('instance/main.db')
+
+
+# --------------------------------------- #
+# Export: Static Files
+# --------------------------------------- #
+copytree('src/static', 'export/static')
 
 
 # --------------------------------------- #
@@ -77,7 +90,7 @@ with database:
 	posts.reverse()
 
 template = environment.get_template('homepage.html')
-output = template.render(siteName=site_name, user=False, recentPosts=posts, permissions=[], footnote=footnote)
+output = template.render(siteName=site_name, user=False, recentPosts=posts, permissions=[], footnote=footnote, linkBadges=link_badges)
 
 output = minify_html.minify(output)
 
@@ -97,7 +110,7 @@ with database:
 	posts.reverse()
 
 template = environment.get_template('posts.html')
-output = template.render(siteName=site_name, posts=posts, user=False, permissions=[], footnote=footnote)
+output = template.render(siteName=site_name, posts=posts, user=False, permissions=[], footnote=footnote, linkBadges=link_badges)
 
 output = minify_html.minify(output)
 
@@ -139,7 +152,9 @@ for post_info in posts:
 
 		footnote = footnote,
 
-		user = False
+		user = False,
+
+		linkBadges=link_badges
 	)
 
 	output = minify_html.minify(output)
