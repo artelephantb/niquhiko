@@ -6,7 +6,7 @@ from markdown import markdown
 import bleach
 
 import os
-from shutil import rmtree
+from shutil import rmtree, copyfile
 
 import tomli
 
@@ -36,6 +36,8 @@ footnote = site_config['footnote']
 allowed_clean = site_config['allowed_clean']
 
 allowed_clean_html_tags = allowed_clean['html_tags']
+allowed_clean_html_attributes = allowed_clean['html_attributes']
+
 allowed_clean_letters = allowed_clean['letters']
 allowed_clean_characters = allowed_clean['characters']
 
@@ -115,10 +117,8 @@ for post_info in posts:
 	with open(f'instance/posts/{post_info['content_link']}', 'r') as file:
 		post_content = file.read()
 
-	
-
 	post_content = markdown(post_content)
-	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags)
+	post_content = bleach.clean(post_content, tags=allowed_clean_html_tags, attributes=allowed_clean_html_attributes)
 
 	output = template.render(
 		id = post_info['id'],
@@ -142,3 +142,19 @@ for post_info in posts:
 
 	with open(f'export/posts/{post_info['id']}/index.html', 'w') as file:
 		file.write(output)
+
+# --------------------------------------- #
+# Export: File Storage
+# --------------------------------------- #
+with database:
+	database.row_factory = sqlite3.Row
+
+	cursor = database.cursor()
+	cursor.execute('SELECT * FROM file_storage')
+
+	files = cursor.fetchall()
+
+os.mkdir(f'export/file_storage')
+
+for file in files:
+	copyfile(f'instance/uploads/{file['content_link']}', f'export/file_storage/{file['id']}')
