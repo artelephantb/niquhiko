@@ -55,6 +55,12 @@ allowed_clean_characters = allowed_clean['characters']
 
 allowed_file_extensions = allowed_clean['allowed_file_extensions']
 
+link_badges_dict = site_config['link_badges']
+link_badges = []
+
+for badge_key in link_badges_dict.keys():
+	link_badges.append(link_badges_dict[badge_key])
+
 
 # --------------------------------------- #
 # Setup
@@ -349,7 +355,7 @@ def create_server():
 		if len(LoginUser.query.all()) != 0:
 			abort(403)
 
-		return render_template('startup.html', siteName=site_name, footnote=footnote)
+		return render_template('startup.html', siteName=site_name, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/')
 	def route_homepage():
@@ -367,7 +373,7 @@ def create_server():
 		posts.reverse()
 		posts = posts[0:3]
 
-		return render_template('homepage.html', siteName=site_name, user=user_logged_in, recentPosts=posts, permissions=user_permissions, footnote=footnote)
+		return render_template('homepage.html', siteName=site_name, user=user_logged_in, recentPosts=posts, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/posts/create')
 	def route_create_post():
@@ -381,7 +387,7 @@ def create_server():
 
 		user_permissions = user_role['permissions']
 
-		return render_template('create_post.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
+		return render_template('create_post.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/posts/')
 	def route_get_posts():
@@ -398,7 +404,7 @@ def create_server():
 		posts = DatabasePost.query.all()
 		posts.reverse()
 
-		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=footnote)
+		return render_template('posts.html', siteName=site_name, user=user_logged_in, posts=posts, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
@@ -492,7 +498,7 @@ def create_server():
 
 		user_permissions = user_role['permissions']
 
-		return render_template('users/register.html', siteName=site_name, permissions=user_permissions, footnote=footnote)
+		return render_template('users/register.html', siteName=site_name, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 
 	@server.route('/users/login')
@@ -507,7 +513,7 @@ def create_server():
 
 		user_permissions = user_role['permissions']
 
-		return render_template('users/login.html', siteName=site_name, permissions=user_permissions, footnote=footnote)
+		return render_template('users/login.html', siteName=site_name, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/users/logout')
 	def route_user_logout():
@@ -585,7 +591,7 @@ def create_server():
 
 		user_permissions = user_role['permissions']
 
-		return render_template('file_upload.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote)
+		return render_template('file_upload.html', siteName=site_name, user=True, permissions=user_permissions, footnote=footnote, linkBadges=link_badges)
 
 	@server.route('/file_storage/<file>')
 	def route_get_file(file):

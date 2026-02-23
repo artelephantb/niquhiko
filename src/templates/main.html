@@ -17,6 +17,9 @@
 		{% endblock %}
 	</main>
 	<footer>
+		{% for badge in linkBadges %}
+			{% include 'link_badge.html' %}
+		{% endfor %}
 		<p>{{ footnote }}</p>
 	</footer>
 </body>

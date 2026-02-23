@@ -38,3 +38,13 @@ a .description {
 .post p {
 	margin: 0;
 }
+
+
+.link-badge img {
+	object-fit: cover;
+
+	width: 90px;
+	height: 30px;
+
+	border: 2px rgb(0, 0, 0, 0.5) outset;
+}

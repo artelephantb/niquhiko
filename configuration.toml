@@ -1,6 +1,10 @@
 site_name = 'Niquhiko'
 footnote = 'My footnote'
 
+
+# --------------------------------------- #
+# Site Colors
+# --------------------------------------- #
 [site_colors]
 background = 'rgb(27, 27, 27)'
 background_accent = 'rgb(38, 38, 38)'
@@ -8,6 +12,10 @@ background_accent = 'rgb(38, 38, 38)'
 accent = 'rgb(255, 174, 0)'
 accent_hover = 'rgb(255, 214, 92)'
 
+
+# --------------------------------------- #
+# Allowed Clean
+# --------------------------------------- #
 [allowed_clean]
 html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
 characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"/"
@@ -19,6 +27,10 @@ allowed_file_extensions = ['txt', 'md', 'png', 'jpg', 'jpeg', 'gif']
 img = ['src']
 a = ['href']
 
+
+# --------------------------------------- #
+# Roles
+# --------------------------------------- #
 [roles.guest]
 permissions = ['CAN_LOGIN', 'CAN_REGISTER', 'CAN_LIKE']
 
@@ -27,3 +39,11 @@ permissions = ['CAN_LOGOUT', 'CAN_LIKE']
 
 [roles.admin]
 permissions = ['CAN_LOGOUT', 'CAN_WRITE_POSTS', 'CAN_LIKE', 'CAN_UPLOAD_FILES']
+
+
+# --------------------------------------- #
+# Link Badges
+# --------------------------------------- #
+[link_badges.niquhiko]
+link = 'https://github.com/artelephantb/niquhiko'
+image_source = '/static/badges/niquhiko.png'
