@@ -2,8 +2,19 @@
 	--bg: {{ colorBackground }};
 	--accent-bg: {{ colorBackgroundAccent }};
 
+	--text: {{ colorText }};
+	--text-light: {{ colorTextLight }};
+
 	--accent: {{ colorAccent }};
 	--accent-hover: {{ colorAccentHover }};
+
+	--accent-text: {{ colorAccentText }};
+
+	--code: {{ colorCode }};
+
+	--preformatted: {{ colorPreformatted }};
+
+	--disabled: {{ colorDisabled }};
 }
 
 

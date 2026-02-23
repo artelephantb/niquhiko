@@ -13,8 +13,19 @@ class Config:
 		self.site_color_background = self.site_colors['background']
 		self.site_color_background_accent = self.site_colors['background_accent']
 
+		self.site_color_text = self.site_colors['text']
+		self.site_color_text_light = self.site_colors['text_light']
+
 		self.site_color_accent = self.site_colors['accent']
 		self.site_color_accent_hover = self.site_colors['accent_hover']
+
+		self.site_color_accent_text = self.site_colors['accent_text']
+
+		self.site_color_code = self.site_colors['code']
+
+		self.site_color_preformatted = self.site_colors['preformatted']
+
+		self.site_color_disabled = self.site_colors['disabled']
 
 		self.roles = site_config['roles']
 

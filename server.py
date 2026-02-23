@@ -320,7 +320,27 @@ def create_server():
 	# --------------------------------------- #
 	@server.route('/main.css')
 	def route_main_css():
-		stylesheet = render_template('main.css', colorBackground=config.site_color_background, colorBackgroundAccent=config.site_color_background_accent, colorAccent=config.site_color_accent, colorAccentHover=config.site_color_accent_hover)
+		stylesheet = render_template(
+			'main.css',
+
+			colorBackground = config.site_color_background,
+			colorBackgroundAccent = config.site_color_background_accent,
+
+			colorText = config.site_color_text,
+			colorTextLight = config.site_color_text_light,
+
+			colorAccent = config.site_color_accent,
+			colorAccentHover = config.site_color_accent_hover,
+
+			colorAccentText = config.site_color_accent_text,
+
+			colorCode = config.site_color_code,
+
+			colorPreformatted = config.site_color_preformatted,
+
+			colorDisabled = config.site_color_disabled
+		)
+
 		return Response(stylesheet, status=200, headers={'Content-Type': 'text/css', 'Cache-Control': 'max-age=250000'})
 
 	@server.route('/startup')

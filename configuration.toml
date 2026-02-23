@@ -9,8 +9,19 @@ footnote = '&#8593; This website was made possible with these tools! &#8593;'
 background = 'rgb(27, 27, 27)'
 background_accent = 'rgb(38, 38, 38)'
 
+text = 'rgb(220, 220, 220)'
+text_light = 'rgb(170, 170, 170)'
+
 accent = 'rgb(255, 174, 0)'
-accent_hover = 'rgb(255, 214, 92)'
+accent_hover = 'rgb(255, 215, 90)'
+
+accent_text = 'rgb(25, 25, 25)'
+
+code = 'rgb(230, 72, 125)'
+
+preformatted = 'rgb(205, 205, 205)'
+
+disabled = 'rgb(15, 15, 15)'
 
 
 # --------------------------------------- #
