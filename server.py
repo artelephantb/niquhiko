@@ -342,7 +342,7 @@ def create_server():
 	@server.route('/main.css')
 	def route_main_css():
 		stylesheet = render_template('main.css', colorBackground=site_color_background, colorBackgroundAccent=site_color_background_accent, colorAccent=site_color_accent, colorAccentHover=site_color_accent_hover)
-		return Response(stylesheet, status=200, headers={'Content-Type': 'text/css'})
+		return Response(stylesheet, status=200, headers={'Content-Type': 'text/css', 'Cache-Control': 'max-age=250000'})
 
 	@server.route('/startup')
 	def route_startup():

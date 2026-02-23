@@ -33,6 +33,14 @@ with open('configuration.toml', 'rb') as file:
 site_name = site_config['site_name']
 footnote = site_config['footnote']
 
+site_colors = site_config['site_colors']
+
+site_color_background = site_colors['background']
+site_color_background_accent = site_colors['background_accent']
+
+site_color_accent = site_colors['accent']
+site_color_accent_hover = site_colors['accent_hover']
+
 allowed_clean = site_config['allowed_clean']
 
 allowed_clean_html_tags = allowed_clean['html_tags']
@@ -50,13 +58,11 @@ database = sqlite3.connect('instance/main.db')
 # --------------------------------------- #
 # Export: Stylesheet
 # --------------------------------------- #
-with open('src/static/main.css', 'r') as file:
-	stylesheet = file.read()
+template = environment.get_template('main.css')
+output = template.render(colorBackground=site_color_background, colorBackgroundAccent=site_color_background_accent, colorAccent=site_color_accent, colorAccentHover=site_color_accent_hover)
 
-os.mkdir('export/static')
-
-with open('export/static/main.css', 'w') as file:
-	file.write(stylesheet)
+with open('export/main.css', 'w') as file:
+	file.write(output)
 
 # --------------------------------------- #
 # Export: Homepage
