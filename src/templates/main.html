@@ -20,7 +20,7 @@
 		{% for badge in linkBadges %}
 			{% include 'link_badge.html' %}
 		{% endfor %}
-		<p>{{ footnote }}</p>
+		<p>{{ footnote|safe }}</p>
 	</footer>
 </body>
 </html>

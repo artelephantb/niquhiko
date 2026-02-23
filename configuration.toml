@@ -1,5 +1,5 @@
 site_name = 'Niquhiko'
-footnote = 'My footnote'
+footnote = '&#8593; This website was made possible with these tools! &#8593;'
 
 
 # --------------------------------------- #
@@ -47,3 +47,11 @@ permissions = ['CAN_LOGOUT', 'CAN_WRITE_POSTS', 'CAN_LIKE', 'CAN_UPLOAD_FILES']
 [link_badges.niquhiko]
 link = 'https://github.com/artelephantb/niquhiko'
 image_source = '/static/badges/niquhiko.png'
+
+[link_badges.simple_css]
+link = 'https://simplecss.org'
+image_source = '/static/badges/simple_css.png'
+
+[link_badges.stack_edit]
+link = 'https://stackedit.io'
+image_source = '/static/badges/stack_edit.png'
