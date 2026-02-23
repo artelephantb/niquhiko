@@ -35,6 +35,14 @@ with open('configuration.toml', 'rb') as file:
 site_name = site_config['site_name']
 footnote = site_config['footnote']
 
+site_colors = site_config['site_colors']
+
+site_color_background = site_colors['background']
+site_color_background_accent = site_colors['background_accent']
+
+site_color_accent = site_colors['accent']
+site_color_accent_hover = site_colors['accent_hover']
+
 roles = site_config['roles']
 
 allowed_clean = site_config['allowed_clean']
@@ -331,6 +339,11 @@ def create_server():
 	# --------------------------------------- #
 	# Normal Routes
 	# --------------------------------------- #
+	@server.route('/main.css')
+	def route_main_css():
+		stylesheet = render_template('main.css', colorBackground=site_color_background, colorBackgroundAccent=site_color_background_accent, colorAccent=site_color_accent, colorAccentHover=site_color_accent_hover)
+		return Response(stylesheet, status=200, headers={'Content-Type': 'text/css'})
+
 	@server.route('/startup')
 	def route_startup():
 		if len(LoginUser.query.all()) != 0:

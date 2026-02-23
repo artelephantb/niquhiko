@@ -1,6 +1,13 @@
 site_name = 'Niquhiko'
 footnote = 'My footnote'
 
+[site_colors]
+background = 'rgb(27, 27, 27)'
+background_accent = 'rgb(38, 38, 38)'
+
+accent = 'rgb(255, 174, 0)'
+accent_hover = 'rgb(255, 214, 92)'
+
 [allowed_clean]
 html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 'button', 'a', 'ol', 'ul', 'li', 'img', 'table', 'tr', 'td', 'tbody', 'pre']
 characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"/"

@@ -1,3 +1,12 @@
+:root {
+	--bg: {{ colorBackground }};
+	--accent-bg: {{ colorBackgroundAccent }};
+
+	--accent: {{ colorAccent }};
+	--accent-hover: {{ colorAccentHover }};
+}
+
+
 textarea {
 	resize: none;
 }
