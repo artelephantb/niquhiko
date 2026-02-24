@@ -32,7 +32,7 @@ html_tags = ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 'blockquote', 'code', 
 characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?$%*&~`():'\"/"
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-allowed_file_extensions = ['txt', 'md', 'png', 'jpg', 'jpeg', 'gif']
+allowed_file_extensions = ['txt', 'md', 'png', 'jpg', 'jpeg', 'gif', 'mp4']
 
 [allowed_clean.html_attributes]
 img = ['src']
