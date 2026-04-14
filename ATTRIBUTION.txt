@@ -1,4 +1,11 @@
-Simple.css - Copyright (c) 2020 Simple.css (Kev Quirk)
-StackEdit - Copyright (c) 2018 Benoit Schweblin
+NOTICE: Licenses can be found in thirdparty_licenses
 
-View requirements.txt to view the Python libraries used.
+Simple.css - Copyright (c) 2020 Simple.css (Kev Quirk) - MIT license
+StackEdit - Copyright (c) 2018 Benoit Schweblin - Apache-2.0 license
+Flask (flask) - Copyright 2010 Pallets - BSD-3-Clause license
+Flask SQLAlchemy (flask-sqlalchemy) - Copyright 2010 Pallets - BSD 3-Clause license
+Flask Login (flask-login) - Copyright (c) 2011 Matthew Frazier - MIT license
+Python-Markdown (markdown) - Copyright 2007, 2008 The Python Markdown Project (v. 1.7 and later), Copyright 2004, 2005, 2006 Yuri Takhteyev (v. 0.2-1.6b), Copyright 2004 Manfred Stienstra (the original version) - BSD 3-Clause license
+Bleach (bleach) - Copyright (c) 2014-2017, Mozilla Foundation - Apache-2.0 license
+Tomli (tomli) - Copyright (c) 2021 Taneli Hukkinen - MIT license
+minify-html - Copyright (c) 2020 Wilson Lin - MIT license
