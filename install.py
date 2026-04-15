@@ -46,6 +46,8 @@ with ZipFile(random_download_name) as opened_zip:
 			with open(path, 'wb') as write_file:
 				write_file.write(read_file.read())
 
+os.remove(random_download_name)
+
 
 abs_script_path = os.path.abspath(os.path.join(INSTALL_PATH, 'command.py'))
 
