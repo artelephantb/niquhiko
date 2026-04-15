@@ -1,6 +1,11 @@
 # Niquhiko
 A light-weight blog site.
 
+## Installation
+```shell
+curl -o- https://raw.githubusercontent.com/artelephantb/niquhiko/main/install.py | python3
+```
+
 ## Get Started
 Run `run_debug.py` to start the debug server (with a random port number).
 
