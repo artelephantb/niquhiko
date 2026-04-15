@@ -12,6 +12,8 @@ ARCHIVE_URL = f'https://github.com/artelephantb/niquhiko/archive/refs/heads/{BRA
 USER_HOME_PATH = os.path.expanduser('~')
 INSTALL_PATH = os.path.join(USER_HOME_PATH, '.niquhiko')
 
+COMMAND_PATH = '/usr/local/bin/nqh'
+
 
 try:
 	os.mkdir(INSTALL_PATH)
@@ -43,3 +45,9 @@ with ZipFile(random_download_name) as opened_zip:
 		with opened_zip.open(name) as read_file:
 			with open(path, 'wb') as write_file:
 				write_file.write(read_file.read())
+
+
+abs_script_path = os.path.abspath(os.path.join(INSTALL_PATH, 'command.py'))
+
+subprocess.run(['chmod', '+x', abs_script_path])
+subprocess.run(['sudo', 'ln', '-s', abs_script_path, COMMAND_PATH])
