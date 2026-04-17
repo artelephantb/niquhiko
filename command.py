@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import logger
 
+import runpy
+
+
+USER_HOME_PATH = os.path.expanduser('~')
+INSTALL_PATH = os.path.join(USER_HOME_PATH, '.niquhiko')
 
 ACTIONS = [
 	[
@@ -24,14 +30,14 @@ except IndexError:
 	logger.error('Missing action, try \'help\'')
 
 
-def action_help():
+def action_help() -> None:
 	print('Actions:')
 	print('=' * 100)
 	for action in ACTIONS:
 		print(action[0] + ':', action[1], sep='\n\t')
 	print('=' * 100)
 
-def action_start():
+def action_start() -> None:
 	try:
 		environment = arguments[2]
 	except IndexError:
@@ -39,6 +45,7 @@ def action_start():
 
 	match environment:
 		case 'dev':
+			runpy.run_path(os.path.join(INSTALL_PATH, 'activate_venv.py'))
 			import run_debug
 			run_debug.start_server()
 		case _:
