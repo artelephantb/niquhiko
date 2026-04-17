@@ -1,5 +1,8 @@
 import os
+import sys
 import subprocess
+
+from venv_installer import VenvInstaller
 
 from datetime import datetime
 
@@ -47,6 +50,14 @@ with ZipFile(random_download_name) as opened_zip:
 				write_file.write(read_file.read())
 
 os.remove(random_download_name)
+
+
+# Create virtual environment
+venv_path = os.path.join(INSTALL_PATH, '.venv')
+
+venv = VenvInstaller()
+venv.add_install_from_pypi('flask')
+venv.create(venv_path)
 
 
 abs_script_path = os.path.abspath(os.path.join(INSTALL_PATH, 'command.py'))

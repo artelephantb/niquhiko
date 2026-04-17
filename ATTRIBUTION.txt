@@ -9,3 +9,5 @@ Python-Markdown (markdown) - Copyright 2007, 2008 The Python Markdown Project (v
 Bleach (bleach) - Copyright (c) 2014-2017, Mozilla Foundation - Apache-2.0 license
 Tomli (tomli) - Copyright (c) 2021 Taneli Hukkinen - MIT license
 minify-html - Copyright (c) 2020 Wilson Lin - MIT license
+activate_venv.py (adapted from https://github.com/pypa/virtualenv/blob/main/src/virtualenv/activation/python/activate_this.py) - Copyright (c) 2020-202x The virtualenv developers - MIT license
+venv_installer.py (adapted from https://gist.github.com/vsajip/4673395#file-pyvenvex-py) - Copyright (C) 2013 Vinay Sajip - BSD 3-Clause license
