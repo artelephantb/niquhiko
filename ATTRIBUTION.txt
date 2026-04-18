@@ -8,5 +8,6 @@ Flask Login (flask-login) - Copyright (c) 2011 Matthew Frazier - MIT license
 Python-Markdown (markdown) - Copyright 2007, 2008 The Python Markdown Project (v. 1.7 and later), Copyright 2004, 2005, 2006 Yuri Takhteyev (v. 0.2-1.6b), Copyright 2004 Manfred Stienstra (the original version) - BSD 3-Clause license
 Bleach (bleach) - Copyright (c) 2014-2017, Mozilla Foundation - Apache-2.0 license
 Tomli (tomli) - Copyright (c) 2021 Taneli Hukkinen - MIT license
+Tomli-W (tomli-w) - 2021 Taneli Hukkinen - MIT license
 minify-html - Copyright (c) 2020 Wilson Lin - MIT license
 https://github.com/pypa/virtualenv/blob/main/src/virtualenv/activation/python/activate_this.py - Copyright (c) 2020-202x The virtualenv developers - MIT license
