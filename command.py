@@ -30,6 +30,9 @@ except IndexError:
 	logger.error('Missing action, try \'help\'')
 
 
+os.chdir(INSTALL_PATH)
+
+
 def action_help() -> None:
 	print('Actions:')
 	print('=' * 100)
