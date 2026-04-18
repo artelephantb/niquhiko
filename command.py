@@ -78,10 +78,12 @@ def action_start() -> None:
 	except IndexError:
 		logger.error('Missing environment argument, try dev (for testing) or pro (for production)')
 
+	from server import create_server
+
 	match environment:
 		case 'dev':
-			import run_debug
-			run_debug.start_server()
+			created_server = create_server(current_working_directory)
+			created_server.run(port=8000)
 		case _:
 			logger.error(f'Invalid environment: \'{environment}\'')
 

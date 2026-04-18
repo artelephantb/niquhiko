@@ -36,14 +36,6 @@ config.load('configuration.toml')
 # --------------------------------------- #
 # Setup
 # --------------------------------------- #
-os.makedirs('instance/posts', exist_ok=True)
-
-try:
-	os.mkdir('instance/uploads')
-except FileExistsError:
-	pass
-
-
 database = SQLAlchemy()
 login_manager = flask_login.LoginManager()
 
@@ -81,10 +73,10 @@ class DatabasePost(database.Model):
 	like_count: Mapped[int] = mapped_column(nullable=False)
 
 
-def create_post(title: str, author: str = '(no author)', description: str = '(no description)', content: str = '(no content)'):
+def create_post(server: Flask, title: str, author: str = '(no author)', description: str = '(no description)', content: str = '(no content)'):
 	id = get_cleaned_string(title, allowed_characters=config.allowed_clean_letters, separator='-', all_lower=True)
 
-	with open(f'instance/posts/{id}', 'x') as file:
+	with open(os.path.join(server.config['POSTS_FOLDER'], id), 'x') as file:
 		file.write(content)
 
 	post = DatabasePost(
@@ -99,10 +91,10 @@ def create_post(title: str, author: str = '(no author)', description: str = '(no
 	database.session.add(post)
 	database.session.commit()
 
-def get_post(id: str):
+def get_post(server: Flask, id: str):
 	post_info = database.get_or_404(DatabasePost, id)
 
-	with open(f'instance/posts/{post_info.content_link}', 'r') as file:
+	with open(os.path.join(server.config['POSTS_FOLDER'], post_info.content_link), 'r') as file:
 		post_content = file.read()
 
 	post_content = markdown(post_content)
@@ -110,8 +102,8 @@ def get_post(id: str):
 
 	return post_info, post_content
 
-def render_post(id: str):
-	post_info, post_content = get_post(id)
+def render_post(server, id: str):
+	post_info, post_content = get_post(server, id)
 
 	try:
 		user_id = flask_login.current_user.id
@@ -215,13 +207,21 @@ def is_allowed_file(filename: str):
 # --------------------------------------- #
 # Server
 # --------------------------------------- #
-def create_server():
-	server = Flask(__name__, static_folder='src/static', static_url_path='/static', template_folder='src/templates')
+def create_server(work_path: str) -> Flask:
+	server = Flask(__name__, static_folder=os.path.join(work_path, 'src/static'), static_url_path='/static', template_folder='src/templates')
 
 	server.secret_key = secrets.token_hex(16)
-	server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
+	server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(work_path, 'main.db')
 	server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-	server.config['UPLOAD_FOLDER'] = 'instance/uploads'
+	server.config['POSTS_FOLDER'] = os.path.join(work_path, 'posts')
+	server.config['UPLOAD_FOLDER'] = os.path.join(work_path, 'uploads')
+
+	os.makedirs(server.config['POSTS_FOLDER'], exist_ok=True)
+
+	try:
+		os.mkdir(server.config['UPLOAD_FOLDER'])
+	except FileExistsError:
+		pass
 
 	database.init_app(server)
 	login_manager.init_app(server)
@@ -279,7 +279,7 @@ def create_server():
 			author = '(no author)'
 
 		try:
-			create_post(title, author, description, content)
+			create_post(server, title, author, description, content)
 		except FileExistsError:
 			return abort(409)
 
@@ -287,7 +287,7 @@ def create_server():
 
 	@server.route('/api/v0/posts/<id>')
 	def route_api_get_post(id):
-		post_info, post_content = get_post(id)
+		post_info, post_content = get_post(server, id)
 
 		return jsonify({
 			'title': post_info.title,
@@ -401,7 +401,7 @@ def create_server():
 
 	@server.route('/posts/<id>')
 	def route_get_post(id):
-		return render_post(id)
+		return render_post(server, id)
 
 
 	# --------------------------------------- #
