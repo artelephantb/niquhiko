@@ -34,15 +34,12 @@ except IndexError:
 	logger.error('Missing action, try \'help\'')
 
 current_working_directory = os.getcwd()
+os.chdir(INSTALL_PATH)
 
 
 runpy.run_path(os.path.join(INSTALL_PATH, 'activate_venv.py'))
 
-
 import tomli_w
-
-
-os.chdir(INSTALL_PATH)
 
 
 def action_help() -> None:
