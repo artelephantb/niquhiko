@@ -404,6 +404,19 @@ def create_server(work_path: str) -> Flask:
 		return render_post(server, id)
 
 
+	@server.route('/copyright')
+	def route_copyright():
+		with open('COPYRIGHT.md', 'r') as copyright_file:
+			copyright = markdown(copyright_file.read())
+
+		return stream_template('post.html',
+		siteName = config.site_name,
+		pageName = 'Copyright',
+		content = copyright,
+		footnote = config.footnote,
+		linkBadges=config.link_badges)
+
+
 	# --------------------------------------- #
 	# API User Routes
 	# --------------------------------------- #
