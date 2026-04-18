@@ -1,3 +1,5 @@
+# Note that this file has been modified from it's original
+#
 # Copyright (c) 2020-202x The virtualenv developers
 #
 # Permission is hereby granted, free of charge, to any person obtaining
